@@ -1,19 +1,20 @@
 # GLSS7 (2016/17) extraction configuration
 #
-# Status: values taken from the manuscript's Section 3.4 and the earlier extraction pipeline.
+# Status: values taken from the manuscript (Section 3.4). Fields marked 'not stated' are not given in
+# the manuscript and are recorded as such rather than guessed.
 # Not yet re-run: the survey microdata are not redistributed, so the extraction must be re-run
 # by an author with GSS access to confirm Table 3 and Figures 3-5, 9 and 10.
-# Fields marked TODO are not stated in the manuscript and must be supplied; do not guess them.
+# Fields marked not stated are not stated in the manuscript and must be supplied; do not guess them.
 
 survey:
   name: Ghana Living Standards Survey Round 7 (2016/17)
   provider: Ghana Statistical Service
-  access_reference: TODO          # GSS data request reference (not in the manuscript)
+  access_reference: not stated          # GSS data request reference (not in the manuscript)
   files_used:
-    household_roster: TODO        # person-level roster (59,864 rows); file name not stated in the manuscript
+    household_roster: not stated        # person-level roster (59,864 rows); file name not stated in the manuscript
     health_expenditure: 06_GHA_EXPHLTH.dta
     poverty_welfare: 18_GHA_POV_2017_GLSS7.dta
-  file_versions: TODO   # date and version of each file from GSS
+  file_versions: not stated   # date and version of each file from GSS
 
 household_identifier:
   unit: household identifier (variable not named in the manuscript)
@@ -28,10 +29,10 @@ variables:
   total_health_expenditure: TOTHLTH   # annual, nominal
   total_household_expenditure: HHEXP_N   # annual, nominal
   sampling_weight: WTA_S
-  age_of_head: TODO   # variable not named in the manuscript
+  age_of_head: not stated   # variable not named in the manuscript
   sex_of_head: 1 = male, 2 = female (value labels)
-  literacy_of_head: TODO   # variable not named in the manuscript
-  region: TODO   # ten regions in GLSS7; variable not named in the manuscript
+  literacy_of_head: not stated   # variable not named in the manuscript
+  region: not stated   # ten regions in GLSS7; variable not named in the manuscript
   expenditure_decile_basis: weighted deciles of HHEXP_N (confirm)
 
 definitions:
