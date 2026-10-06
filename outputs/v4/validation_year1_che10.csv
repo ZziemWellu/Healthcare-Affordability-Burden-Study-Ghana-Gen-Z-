@@ -1,0 +1,7 @@
+config,scenario,model_share_over_10pct_2026,glss7_che10_incidence
+primary,status_quo,0.0,1.08
+primary,reform,0.0,1.08
+primary,shock_heavy,0.0,1.08
+upper,status_quo,7.88,1.08
+upper,reform,6.529999999999999,1.08
+upper,shock_heavy,7.79,1.08

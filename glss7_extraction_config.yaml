@@ -1,0 +1,62 @@
+# GLSS7 (2016/17) extraction configuration
+#
+# Status: values taken from the manuscript's Section 3.4 and the earlier extraction pipeline.
+# Not yet re-run: the survey microdata are not redistributed, so the extraction must be re-run
+# by an author with GSS access to confirm Table 3 and Figures 3-5, 9 and 10.
+# Fields marked TODO are not stated in the manuscript and must be supplied; do not guess them.
+
+survey:
+  name: Ghana Living Standards Survey Round 7 (2016/17)
+  provider: Ghana Statistical Service
+  access_reference: TODO          # GSS data request reference (not in the manuscript)
+  files_used:
+    household_roster: TODO        # person-level roster (59,864 rows); file name not stated in the manuscript
+    health_expenditure: 06_GHA_EXPHLTH.dta
+    poverty_welfare: 18_GHA_POV_2017_GLSS7.dta
+  file_versions: TODO   # date and version of each file from GSS
+
+household_identifier:
+  unit: household identifier (variable not named in the manuscript)
+  de_duplication_rule: keep head-of-household rows (s1q3 = 1)
+
+head_of_household:
+  relationship_variable: s1q3
+  head_code: 1                    # confirm against the value labels in the file
+  check_row_count: 14009          # expected households after reduction; reconcile with the paper
+
+variables:
+  total_health_expenditure: TOTHLTH   # annual, nominal
+  total_household_expenditure: HHEXP_N   # annual, nominal
+  sampling_weight: WTA_S
+  age_of_head: TODO   # variable not named in the manuscript
+  sex_of_head: 1 = male, 2 = female (value labels)
+  literacy_of_head: TODO   # variable not named in the manuscript
+  region: TODO   # ten regions in GLSS7; variable not named in the manuscript
+  expenditure_decile_basis: weighted deciles of HHEXP_N (confirm)
+
+definitions:
+  oop_burden: "total_health_expenditure / total_household_expenditure"
+  che_threshold_pct: [10, 20, 25]
+  che_denominator: total household expenditure (consumption basis)
+  missing_or_zero_health_spending: retained as a valid zero (confirm)
+  missing_denominator: fewer than 0.5% excluded (manuscript Section 3.4; conflicts with the 'no exclusions' statement; reconcile)
+
+reconciliation_targets:           # values reported in the manuscript; to be checked against the run
+  weighted_mean_burden_pct: 0.75
+  weighted_median_burden_pct: 0.00
+  che_10pct: 1.08
+  che_20pct: 0.21
+  che_25pct: 0.13
+  poorest_decile_mean_pct: 1.11
+  richest_decile_mean_pct: 0.62
+  sex_male_head_mean_pct: 0.74    # n = 9,619
+  sex_female_head_mean_pct: 0.77  # n = 4,361
+  literate_head_mean_pct: 0.74    # n = 12,384
+  illiterate_head_mean_pct: 0.84  # n = 1,598
+  # Subgroup totals (9,619 + 4,361 = 13,980; 12,384 + 1,598 = 13,982) do not add to 14,009.
+  # The missing-data handling must be stated in the run output.
+
+outputs_to_archive:
+  - household-level analysis file (de-identified; no GLSS7 raw values)
+  - summary tables reproducing Table 3
+  - figure source data for Figures 3-5, 9, 10
