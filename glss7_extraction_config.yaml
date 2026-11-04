@@ -57,6 +57,9 @@ reconciliation_targets:           # values reported in the manuscript; to be che
   che_25pct: 0.13
   poorest_decile_mean_pct: 1.11
   richest_decile_mean_pct: 0.62
+  # Sex and literacy subgroup results below were removed from the manuscript on 2026-11-04 (no test possible
+  # without the microdata). Kept for the record only.
+  external_check: "Sataru, Twumasi-Ankrah and Seddoh 2022 (same 14,009 households): CHE 1.0% at 10%, 0.1% at 25%"
   sex_male_head_mean_pct: 0.74    # n = 9,619
   sex_female_head_mean_pct: 0.77  # n = 4,361
   literate_head_mean_pct: 0.74    # n = 12,384
