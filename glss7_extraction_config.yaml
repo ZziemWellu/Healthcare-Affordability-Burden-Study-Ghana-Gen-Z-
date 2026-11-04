@@ -1,7 +1,9 @@
 # GLSS7 (2016/17) extraction configuration
 #
-# Status: values taken from the manuscript (Section 3.4). Fields marked 'not stated' are not given in
-# the manuscript and are recorded as such rather than guessed.
+# Status: values taken from the manuscript (Section 3.4). Roster file and roster variable names were
+# added on 2026-11-04 from the GLSS7 data dictionary (IHSN catalog 7967, GHA_2016_GLSS_v01_M,
+# file g7sec1: 59,864 cases, matching the manuscript). Fields marked 'not stated' are still unknown
+# and are recorded as such rather than guessed.
 # Not yet re-run: the survey microdata are not redistributed, so the extraction must be re-run
 # by an author with GSS access to confirm Table 3 and Figures 3-5, 9 and 10.
 # Fields marked not stated are not stated in the manuscript and must be supplied; do not guess them.
@@ -9,15 +11,20 @@
 survey:
   name: Ghana Living Standards Survey Round 7 (2016/17)
   provider: Ghana Statistical Service
+  catalog_url: https://microdata.statsghana.gov.gh/index.php/catalog/97   # login required
+  ddi_reference: DDI-GHA-GSS-GLSS7-2017-v1
+  ihsn_reference: GHA_2016_GLSS_v01_M   # https://catalog.ihsn.org/catalog/7967 (public data dictionary)
   access_reference: not stated          # GSS data request reference (not in the manuscript)
   files_used:
-    household_roster: not stated        # person-level roster (59,864 rows); file name not stated in the manuscript
+    household_roster: g7sec1.dta        # person-level roster, 59,864 cases (data dictionary); confirm extension
     health_expenditure: 06_GHA_EXPHLTH.dta
     poverty_welfare: 18_GHA_POV_2017_GLSS7.dta
+    education_literacy: g7sec2.dta      # Section 2 (education), 54,516 cases; source of head literacy
+    # The two aggregate files above are not in the public IHSN file list; they come with the GSS aggregates package.
   file_versions: not stated   # date and version of each file from GSS
 
 household_identifier:
-  unit: household identifier (variable not named in the manuscript)
+  unit: hid   # 'Household ID' in g7sec1; also clust (EA) and nh (household number). Confirm the key in the aggregate files
   de_duplication_rule: keep head-of-household rows (s1q3 = 1)
 
 head_of_household:
@@ -29,10 +36,10 @@ variables:
   total_health_expenditure: TOTHLTH   # annual, nominal
   total_household_expenditure: HHEXP_N   # annual, nominal
   sampling_weight: WTA_S
-  age_of_head: not stated   # variable not named in the manuscript
-  sex_of_head: 1 = male, 2 = female (value labels)
-  literacy_of_head: not stated   # variable not named in the manuscript
-  region: not stated   # ten regions in GLSS7; variable not named in the manuscript
+  age_of_head: s1q5y   # 'Age in years', g7sec1
+  sex_of_head: s1q2   # 'Sex of individual', g7sec1; 1 = male, 2 = female (value labels)
+  literacy_of_head: not stated   # candidates in g7sec2: s2cq1 (can read English/French), s2cq2 (Ghanaian language read), s2cq3 (write English/French). Authors to confirm
+  region: not stated   # ten regions in GLSS7; not in g7sec1. Likely in g7sec0 or the POV aggregate. Authors to confirm
   expenditure_decile_basis: weighted deciles of HHEXP_N (confirm)
 
 definitions:
@@ -55,7 +62,8 @@ reconciliation_targets:           # values reported in the manuscript; to be che
   literate_head_mean_pct: 0.74    # n = 12,384
   illiterate_head_mean_pct: 0.84  # n = 1,598
   # Subgroup totals (9,619 + 4,361 = 13,980; 12,384 + 1,598 = 13,982) do not add to 14,009.
-  # The missing-data handling must be stated in the run output.
+  # The missing-data handling must be stated in the run output. g7sec2 covers 54,516 of 59,864 persons, so heads
+  # without an education record are a possible reason the literacy total is below 14,009 (unverified).
 
 outputs_to_archive:
   - household-level analysis file (de-identified; no GLSS7 raw values)
