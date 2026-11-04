@@ -58,7 +58,14 @@ def rich(p, text, italic=False, bold=False, size=None):
         if size:
             r.font.size = Pt(size)
 
-def build(blocks, path, banner=None):
+def fig_parts(caption):
+    """'Figure 3. Title text. Legend...' -> ('Figure 3', 'Title text', 'Legend...')."""
+    label, rest = caption.split(". ", 1)
+    title, _, legend = rest.partition(". ")
+    return label, title.rstrip("."), legend
+
+
+def build(blocks, path, banner=None, figures_inline=True):
     doc = Document()
     st = doc.styles["Normal"]; st.font.name = "Calibri"; st.font.size = Pt(11)
     for s in doc.sections:
@@ -71,8 +78,16 @@ def build(blocks, path, banner=None):
         elif k == "h1": doc.add_heading(b[1], level=1)
         elif k == "h2": doc.add_heading(b[1], level=2)
         elif k == "p": rich(doc.add_paragraph(), b[1])
+        elif k == "lp":
+            p = doc.add_paragraph(); r = p.add_run(b[1] + ": "); r.bold = True; rich(p, b[2])
         elif k == "bullet": rich(doc.add_paragraph(style="List Bullet"), b[1])
         elif k == "eq": p = doc.add_paragraph(); p.paragraph_format.left_indent = Inches(0.4); rich(p, b[1])
+        elif k == "fig" and not figures_inline:
+            # journal format: image uploaded as a separate file; title (bold) and legend stay in the text
+            label, title, legend = fig_parts(b[3])
+            p = doc.add_paragraph(); r = p.add_run(f"{label}. {title}."); r.bold = True
+            if legend:
+                rich(p, " " + legend)
         elif k == "fig":
             doc.add_picture(os.path.join(FIG, b[1]), width=Inches(b[2]))
             rich(doc.add_paragraph(), b[3], italic=True, size=9.5)
@@ -106,15 +121,15 @@ REFS = [
     "Fair Wages and Salaries Commission. 2025. “2026 National Daily Minimum Wage.” Accra: Government of Ghana.",
     "Finex Insights. 2025. “Ghana's Minimum Wage Growth: A Decade of Gradual Gains and Sudden Jumps (2015–2025).” August 19, 2025.",
     "Ghana Statistical Service. 2018. Ghana Living Standards Survey (GLSS VII) 2016-2017, version 01 (September 2018). Ref. GHA_2016_GLSS_v01_M. Accra: Ghana Statistical Service. https://microdata.statsghana.gov.gh/index.php/catalog/97.",
-    "Okoroh, Juliet, and Sarpong Essoun. 2018. “Evaluating the Impact of the National Health Insurance Scheme of Ghana on Out-of-Pocket Expenditures: A Systematic Review.” BMC Health Services Research 18: 426. https://doi.org/10.1186/s12913-018-3249-9.",
+    "Okoroh, Juliet, Sarpong Essoun, Anthony Seddoh, Hobart Harris, Joel S. Weissman, Lydia Dsane-Selby, and Robert Riviello. 2018. “Evaluating the Impact of the National Health Insurance Scheme of Ghana on Out-of-Pocket Expenditures: A Systematic Review.” BMC Health Services Research 18: 426. https://doi.org/10.1186/s12913-018-3249-9.",
     "Pharmexcil (Pharmaceuticals Export Promotion Council of India). 2020. Ghana Pharma Market & Regulatory Report. Hyderabad: Pharmexcil. https://pharmexcil.com/uploads/countryreports/Ghana_Market_Regulatory_report2020.pdf.",
-    "Prempeh, Nana Owusu Achiaw, and Ziem P. Wellu. 2025. “An Analysis of Household Catastrophic Health Expenditure and Food Insecurity in Ghana.” medRxiv preprint. https://doi.org/10.1101/2025.03.31.25324988.",
+    "Baah-Abekah, J., D. K. Ibrahim, T. A. Atugba, S. Theodore, S. A. Seidu, D. Casley-Hayford, L. Deborah, and B. Ahulu. 2025. “An Analysis of Household Catastrophic Health Expenditure and Food Insecurity in Ghana.” medRxiv preprint. https://doi.org/10.1101/2025.03.31.25324988.",
     "Sataru, Fuseini, Kwame Twumasi-Ankrah, and Anthony Seddoh. 2022. “An Analysis of Catastrophic Out-of-Pocket Health Expenditures in Ghana.” Frontiers in Health Services 2. https://doi.org/10.3389/frhs.2022.706216.",
     "Trading Economics. 2026. “Ghana Inflation Rate.” Accessed August 2026. https://tradingeconomics.com/ghana/inflation-cpi.",
-    "Wellu, Patrick Ziem, Adawu Redeemer, Michael Annor Peprah, Daniel Amakye, Emmanuel Prempeh Agyemang, Prince Peprah, and Williams Agyemang-Duah. 2026. “Catastrophic health expenditure and household food insecurity among older adults with health conditions in Ghana: a cross-sectional analysis.” BMC Public Health. Published 17 July 2026. https://doi.org/10.1186/s12889-026-28188-1. [[Crossref on 4 Nov 2026 lists no volume or article number yet; ADD them if assigned before submission]]",
+    "Wellu, Patrick Ziem, Adawu Redeemer, Michael Annor Peprah, Daniel Amakye, Emmanuel Prempeh Agyemang, Prince Peprah, and Williams Agyemang-Duah. 2026. “Catastrophic health expenditure and household food insecurity among older adults with health conditions in Ghana: a cross-sectional analysis.” BMC Public Health. Published 17 July 2026. https://doi.org/10.1186/s12889-026-28188-1.",
     "WHO Regional Office for Africa. 2023. “Ghana: Universal Health Coverage/Communicable and Non-communicable Diseases” (country profile). Brazzaville: WHO Regional Office for Africa. https://www.afro.who.int/sites/default/files/2023-08/Ghana.pdf.",
     "World Bank. 2023. “Public Health Expenditure for Universal Health Coverage in Ghana.” Washington, DC: World Bank Group.",
-    "World Bank. n.d. “Out-of-Pocket Expenditure (% of Current Health Expenditure) – Ghana.” World Bank Open Data. https://data.worldbank.org/indicator/SH.XPD.OOPC.CH.ZS?locations=GH.",
+    "World Bank. n.d. “Out-of-Pocket Expenditure (% of Current Health Expenditure) – Ghana.” World Bank Open Data. https://data.worldbank.org/indicator/SH.XPD.OOPC.CH.ZS?locations=GH. Accessed 4 November 2026.",
 ]
 
 MANUSCRIPT = [
@@ -122,18 +137,21 @@ MANUSCRIPT = [
     ("p", "Nana Owusu Achiaw Prempeh (corresponding author), Department of Data Science, Academic City University College, Accra, Ghana. nana.prempeh@acity.edu.gh"),
     ("p", "Ziem P. Wellu (co-corresponding author), Department of Computer Science, University of Ghana, Accra, Ghana. pzwellu@st.ug.edu.gh. ORCID: 0009-0004-5808-2675"),
         ("h1", "Abstract"),
-    ("p", f"Ghana's National Health Insurance Scheme was designed to protect households from catastrophic out-of-pocket (OOP) healthcare costs, yet OOP payments still account for about 26 percent of current health expenditure nationally (World Bank, n.d.). This paper asks a generational question: if current trends in healthcare costs, wages and macroeconomic volatility persist, what OOP burden will Ghana's Generation Z cohort face around age 50? We combine two approaches. First, we compute household OOP burden from GLSS7 (2016/17) microdata (n = 14,009 households) and find a weighted mean of 0.75 percent of household expenditure, which is 0 percent at the median. Second, we run a stochastic stress-test simulation of 10,000 household trajectories under three scenarios (status quo, financing reform to the Abuja target, and repeated currency shocks). The primary analysis uses the GLSS7 baseline. Under this baseline, the status-quo mean burden in 2051 is {f1(P_SQ.mean_end)} percent of income, the financing-reform scenario is {f1(P_RF.mean_end)} percent, and repeated currency shocks reach {f1(P_SH.mean_end)} percent, with a 90th percentile of {f1(P_SH.p90_end)} percent. Only {f1(P_SQ.share_over_20_end)} percent of status-quo households exceed the 20 percent catastrophic-expenditure threshold in 2051, and risk is concentrated in the shock scenarios. A previous calibration that set the non-crisis burden at 6 percent of income produces materially higher burdens (status quo {f1(U_SQ.mean_end)} percent in 2051). We report it as an upper bound because the GLSS7 data do not support that baseline. The model does not reproduce the GLSS7 catastrophic-expenditure incidence in year one, and we report this as a limitation. Results are model-implied outcomes under stated assumptions, not forecasts for individual households."),
+    ("lp", "Background", "Ghana's National Health Insurance Scheme was designed to protect households from catastrophic out-of-pocket (OOP) healthcare costs, yet OOP payments still account for more than a quarter of current health expenditure. This paper asks a generational question: if current trends in healthcare costs, wages and macroeconomic volatility persist, what OOP burden will Ghana's Generation Z cohort face around age 50?"),
+    ("lp", "Methods", "We computed household OOP burden from GLSS7 (2016/17) microdata (n = 14,009 households). We then ran a stochastic stress-test simulation of 10,000 household trajectories from 2026 to 2051 under three scenarios: status quo, financing reform to the Abuja target, and repeated currency shocks. The primary analysis is anchored to the GLSS7 baseline; an earlier calibration with a 6 percent non-crisis burden is reported as an upper bound."),
+    ("lp", "Results", f"The GLSS7 weighted mean OOP burden is 0.75 percent of household expenditure, and 0 percent at the median. Under this baseline, the status-quo mean burden in 2051 is {f1(P_SQ.mean_end)} percent of income, the financing-reform scenario is {f1(P_RF.mean_end)} percent, and repeated currency shocks reach {f1(P_SH.mean_end)} percent, with a 90th percentile of {f1(P_SH.p90_end)} percent. Only {f1(P_SQ.share_over_20_end)} percent of status-quo households exceed the 20 percent catastrophic-expenditure threshold in 2051. The 6 percent calibration produces materially higher burdens (status quo {f1(U_SQ.mean_end)} percent in 2051), but the GLSS7 data do not support that baseline. The model does not reproduce the GLSS7 catastrophic-expenditure incidence in year one."),
+    ("lp", "Conclusions", "Under the data-supported baseline, the generational risk lies in exposure to currency shocks rather than in the average household's burden, and financing reform keeps burden low under every calibration. Results are model-implied outcomes under stated assumptions, not forecasts for individual households."),
     ("p", "Keywords: catastrophic health expenditure; out-of-pocket payments; National Health Insurance Scheme; Ghana; generational projection; Monte Carlo simulation; GLSS7."),
 
     ("h1", "1. Introduction"),
-    ("p", "Out-of-pocket payments remain a large share of health spending in Ghana, and catastrophic health expenditure (CHE) falls hardest on poorer households (Akazili et al. 2017a; Akazili et al. 2017b; Ataguba and Kabaniha 2022). Most of the CHE literature in Ghana is retrospective and cross-sectional. It describes the burden in a survey year and does not ask what a cohort will face as it ages. This paper projects the burden for a cohort of young adults, representative of Generation Z, to around age 50."),
+    ("p", "Out-of-pocket payments account for more than a quarter of current health expenditure in Ghana (World Bank, n.d.), and catastrophic health expenditure (CHE) falls hardest on poorer households (Akazili et al. 2017a; Akazili et al. 2017b; Ataguba and Kabaniha 2022). Most of the CHE literature in Ghana is retrospective and cross-sectional. It describes the burden in a survey year and does not ask what a cohort will face as it ages. This paper projects the burden for a cohort of young adults, representative of Generation Z, to around age 50."),
     ("p", "Generation Z is used as an analytical cohort, not a homogeneous population. The primary simulation represents a household aged 25 in 2026, which corresponds to a 2001 birth year. It runs for 26 annual observations (2026–2051) and, in an extended analysis, for 36 annual observations (2026–2061, age 60)."),
-    ("p", "A companion study by the same team analysed AHIES 2022 data on catastrophic expenditure and food insecurity among adults aged 50 and over with a health condition (Wellu et al. 2026; an earlier version was posted as Prempeh and Wellu 2025). That study is cross-sectional and covers a different population and outcome. The present paper is a forward projection built on GLSS7 (2016/17) and does not reuse the 2022 AHIES analysis."),
+    ("p", "A companion study by the same team analysed AHIES 2022 data on catastrophic expenditure and food insecurity among adults aged 50 and over with a health condition (Wellu et al. 2026). That study is cross-sectional and covers a different population and outcome. The present paper is a forward projection built on GLSS7 (2016/17) and does not reuse the 2022 AHIES analysis."),
     ("p", "The paper makes three contributions. It shows what the GLSS7 microdata imply for the starting burden. It sets out a transparent stochastic model and classifies every parameter by its evidence. And it shows how strongly the generational conclusion depends on the baseline calibration, which we treat as the main decision in the analysis."),
 
     ("h1", "2. Literature Review"),
     ("h2", "2.1 Catastrophic health expenditure and NHIS in Ghana"),
-    ("p", "The National Health Insurance Scheme was introduced in 2003 to reduce OOP payments. The pre-NHIS baseline, based on the 2005/06 Ghana Living Standards Survey, found that OOP payments increased poverty and were regressive across income deciles (Akazili et al. 2017a). A companion analysis from the same survey round estimated the share of households spending more than 20 percent of income on OOP care (Akazili et al. 2017b). Okoroh and Essoun (2018) reviewed NHIS impact studies and found that uninsured households paid substantially more out of pocket than insured households, while a meaningful minority of insured households still incurred catastrophic payments. OOP payments are the regressive component of Ghana's health financing (Akazili, Gyapong and McIntyre 2011); in their data, the poorest fifth of households bears 6.9 percent of OOP spending against 5.5 percent of income (Ataguba and Kabaniha 2022). Sataru, Twumasi-Ankrah and Seddoh (2022) analyse catastrophic OOP expenditure in Ghana using GLSS7 and find an incidence of 1.0 percent at the 10 percent threshold."),
+    ("p", "The National Health Insurance Scheme was introduced in 2003 to reduce OOP payments. The pre-NHIS baseline, based on the 2005/06 Ghana Living Standards Survey, found that OOP payments increased poverty and were regressive across income deciles (Akazili et al. 2017a). A companion analysis from the same survey round estimated the share of households spending more than 20 percent of income on OOP care (Akazili et al. 2017b). Okoroh et al. (2018) reviewed NHIS impact studies and found that uninsured households paid substantially more out of pocket than insured households, while a meaningful minority of insured households still incurred catastrophic payments. OOP payments are the regressive component of Ghana's health financing (Akazili, Gyapong and McIntyre 2011); in their data, the poorest fifth of households bears 6.9 percent of OOP spending against 5.5 percent of income (Ataguba and Kabaniha 2022). Sataru, Twumasi-Ankrah and Seddoh (2022) analyse catastrophic OOP expenditure in Ghana using GLSS7 and find an incidence of 1.0 percent at the 10 percent threshold."),
     ("h2", "2.2 Financing gaps and macroeconomic volatility"),
     ("p", "Government health spending in Ghana has remained below the Abuja Declaration target of 15 percent of the national budget (World Bank 2023). Ghana's inflation has been volatile, with an annual average of about 17 percent since 1998 (Trading Economics 2026) and a sharp rise in 2022 (Bloomberg 2022). About 70 percent of Ghana's pharmaceutical requirements are imported (Pharmexcil 2020), so currency depreciation raises health costs independently of domestic wages. Minimum wages rose by about 211 percent in nominal terms between 2015 and 2026 (Fair Wages and Salaries Commission 2025; Finex Insights 2025), but adjustments lagged inflation for much of that period."),
     ("h2", "2.3 Contribution"),
@@ -148,12 +166,12 @@ MANUSCRIPT = [
          ["Nominal minimum-wage CAGR, 2015–2026", "10.9%", "10.9%", "A", "GHS 7.00 (2015) to GHS 21.77 (2026); Fair Wages and Salaries Commission 2025; Finex Insights 2025"],
          ["Non-crisis OOP burden, % of income", "0.75%", "6.0%", "A (primary) / C (upper)", "GLSS7 weighted mean of OOP share of expenditure (0.75%); the 6% value is an author calibration to the CHE literature"],
          ["Burden floor, % of income", "0%", "1%", "C", "GLSS7 median is 0%; the 1% floor in the v3 model lifted 91% of primary-case draws and was removed for the primary case"],
-         ["OOP share of current health expenditure", "26%", "26%", "A", "Okoroh and Essoun 2018; World Bank 2023. Cancels out of the burden formula unless it drifts (see Section 3.4)"],
-         ["Annual probability of a catastrophic event", "8%", "8%", "B (blended)", "Blended from sub-Saharan CHE incidence (12.9–20.4%) and Ghana-specific findings; sensitivity 1.1–15%"],
+         ["OOP share of current health expenditure", "26%", "26%", "A", "Okoroh et al. 2018; World Bank 2023. Cancels out of the burden formula unless it drifts (see Section 3.5)"],
+         ["Annual probability of a catastrophic event", "8%", "8%", "B (blended)", "Blended from sub-Saharan CHE incidence of 12.9–20.4% (Baah-Abekah et al. 2025) and Ghana-specific findings; sensitivity 1.1–15%"],
          ["Crisis severity multiplier", "3–7×", "3–7×", "C", "Author calibration to the qualitative CHE severity gap"],
          ["Annual probability of a currency-shock year", "12%", "12%", "C", "Author estimate. Note: about 4 episodes in 25 years would give 16%; see Section 6"],
          ["Stable and shock inflation (means, SDs)", "10% (3%); 30% (10%)", "same", "C", "Author calibration to 2024–2026 disinflation and the 2022–2023 episode; Trading Economics 2026; Bloomberg 2022"],
-         ["Import-cost premium, shock / stable years", "6% / 2%", "6% / 2%", "C", "Author calibration; the import share of pharmaceuticals (about 70%; Pharmexcil 2020) supports the direction of effect, not the size"],
+         ["Import-cost premium, shock / stable years", "6% / 2%", "6% / 2%", "C", "Author calibration; about 70% of pharmaceuticals are imported (Pharmexcil 2020), which supports the direction of effect, not the size"],
          ["Liquidity buffer; debt-trigger threshold", "1 month; 15 pp", "same", "C", "Illustrative; sensitivity grid in Section 4.4"],
      ]),
     ("h2", "3.2 Model structure"),
@@ -229,7 +247,7 @@ MANUSCRIPT = [
     ("p", "The drivers of the outcome are, in order: nominal wage growth, currency-shock frequency and the baseline burden. Wage growth is the best-evidenced of the three. Shock frequency and the baseline are author calibrations, and the conclusions depend on them. Policy levers that reduce shock exposure, such as local production of medicines and reserves, therefore matter more in this analysis than the level of the OOP share."),
     ("p", "The policy message is narrower than the earlier draft. Financing reform keeps burden flat under every calibration. The status quo is manageable on average but leaves a tail that the shock scenarios make large. Protection against that tail requires limiting exposure to currency shocks and making NHIS coverage reliable, in addition to raising government health spending."),
     ("h2", "5.1 Structural drivers"),
-    ("p", "Three structural features are documented in the literature and are consistent with the model's mechanisms: currency exposure in imported medical inputs (Pharmexcil 2020), NHIS coverage that has expanded in breadth faster than in depth (Okoroh and Essoun 2018), and government financing below the Abuja target (World Bank 2023). The model captures the first through the import-cost premium, and the second and third only indirectly."),
+    ("p", "Three structural features are documented in the literature and are consistent with the model's mechanisms: currency exposure in imported medical inputs (Pharmexcil 2020), NHIS coverage that has expanded in breadth faster than in depth (Okoroh et al. 2018), and government financing below the Abuja target (World Bank 2023). The model captures the first through the import-cost premium, and the second and third only indirectly."),
     ("h2", "5.2 Generational and clinical considerations"),
     ("p", "Non-communicable diseases accounted for 45 percent of deaths in Ghana in 2019 (WHO Regional Office for Africa 2023), and they tend to generate longer, repeat-cost care. The model does not represent this, so the projections probably understate the burden of chronic conditions."),
     ("h1", "6. Limitations"),
@@ -241,13 +259,25 @@ MANUSCRIPT = [
     ("bullet", "The catastrophic-event probability of 8% was blended from regional literature. Its interpretation as an annual per-household hazard is not directly supported by the survey data."),
     ("h1", "7. Conclusion"),
     ("p", f"A stochastic projection calibrated to the GLSS7 baseline finds that the mean OOP burden for a Generation Z cohort rises modestly under the status quo, to {f1(P_SQ.mean_end)} percent of income by 2051, while repeated currency shocks produce a large tail, with a 90th percentile of {f1(P_SH.p90_end)} percent. The generational risk lies in shock exposure, and financing reform keeps burden low under every calibration. The earlier, higher-burden projection depended on an assumed 6% non-crisis burden that the survey data do not support."),
-    ("h1", "Data and Code Availability"),
-    ("p", "GLSS7 (2016/17) microdata are held by the Ghana Statistical Service and are available on application through its standard procedure. The microdata cannot be redistributed. The simulation code, the sensitivity and reconciliation scripts, and the run pipeline are available at https://github.com/ZziemWellu/Healthcare-Affordability-Burden-Study-Ghana-Gen-Z- under the MIT licence, together with the v4 pipeline (model_v4.py, analysis_v4.py, run_all.py), its outputs and the GLSS7 extraction configuration. Running python run_all.py regenerates every simulation table and figure in this paper. The other public data sources are cited in Table 1 and the references. [[ADD archived DOI (e.g. Zenodo release of the repository) before submission]]"),
+    ("h1", "Abbreviations"),
+    ("p", "AHIES: Annual Household Income and Expenditure Survey; CAGR: compound annual growth rate; CHE: catastrophic health expenditure; GLSS7: Ghana Living Standards Survey Round 7; GSS: Ghana Statistical Service; NCD: non-communicable disease; NHIS: National Health Insurance Scheme; OAT: one-at-a-time; OOP: out-of-pocket; pp: percentage points; SD: standard deviation."),
     ("h1", "Declarations"),
-    ("p", "Use of AI tools: AI tools were used to check grammar and wording. [[AUTHORS TO CONFIRM BEFORE SUBMISSION: the project records show that an AI assistant also wrote the simulation, sensitivity and figure code, and drafted sections of the text. Journal policy requires disclosure of those uses. Suggested wording: “An AI assistant was used to draft and check text, to write and check the simulation and analysis code, and to generate figures. All modelling decisions, parameter choices and conclusions are the authors’ own, and the code was re-run and checked by the authors.”]]"),
-    ("p", "Ethics: the study uses no identifiable personal data. [[CONFIRM whether institutional review is required for the GLSS7 analysis]]"),
-    ("p", "Funding: This research received no specific grant from any funding agency in the public, commercial, or not-for-profit sectors. Competing interests: The authors declare no competing interests. Author contributions: Nana Owusu Achiaw Prempeh was responsible for experiments, analysis and drafting the manuscript. Ziem P. Wellu was responsible for reviewing and correcting all experiments and analysis and for placing the manuscript in perspective."),
-    ("p", "Acknowledgements: We thank an anonymous clinician for clinical input. [[EDITOR NOTE: the journal may require the identity of all contributors to be disclosed to the editor, even if not published]]"),
+    ("h2", "Ethics approval and consent to participate"),
+    ("p", "Not applicable. The study is a secondary analysis of anonymised GLSS7 microdata released by the Ghana Statistical Service, combined with a simulation model that involves no human participants. Ethics approval was therefore not required."),
+    ("h2", "Consent for publication"),
+    ("p", "Not applicable."),
+    ("h2", "Availability of data and materials"),
+    ("p", "GLSS7 (2016/17) microdata are held by the Ghana Statistical Service and are available on application through its standard procedure. The microdata cannot be redistributed. The simulation code, the sensitivity and reconciliation scripts, and the run pipeline are available at https://github.com/ZziemWellu/Healthcare-Affordability-Burden-Study-Ghana-Gen-Z- under the MIT licence, together with the v4 pipeline (model_v4.py, analysis_v4.py, run_all.py), its outputs and the GLSS7 extraction configuration. Running python run_all.py regenerates every simulation table and figure in this paper. The other public data sources are cited in Table 1 and the references."),
+    ("h2", "Competing interests"),
+    ("p", "The authors declare that they have no competing interests."),
+    ("h2", "Funding"),
+    ("p", "This research received no specific grant from any funding agency in the public, commercial, or not-for-profit sectors."),
+    ("h2", "Authors' contributions"),
+    ("p", "NOAP was responsible for the experiments, the analysis and drafting the manuscript. ZPW reviewed and corrected all experiments and analyses and placed the manuscript in perspective. Both authors read and approved the final manuscript."),
+    ("h2", "Use of artificial intelligence tools"),
+    ("p", "AI tools were used to improve the wording and sentence framing of the manuscript. The authors reviewed and edited all text and take full responsibility for the content."),
+    ("h2", "Acknowledgements"),
+    ("p", "We thank an anonymous clinician for clinical input."),
     ("refs", REFS),
 ]
 
@@ -263,14 +293,136 @@ ISSUE_LOG = [
     ["9", "Burden floor", "Primary uses 0% floor; the 1% floor in v3 lifted 91% of draws under the GLSS7 baseline.", "Done (Table 1)"],
     ["10", "Probabilistic analysis", "Re-run without the OOP-share parameter; upper-bound median 27.8% (v3: 28.7%).", "Done; explained in Section 4.5"],
     ["11", "Citations", "WHO attribution, Zhang et al., Lule et al. and the AHIES attribution removed. Akazili cited as 2017a and 2017b. Medium-risk items flagged [[VERIFY]].", "Done. Findex and the WHO 15–20% placeholder were uncited and are removed; WHO AFRO source found and verified (2023 Ghana profile: NCDs 45% of deaths in 2019). Knoema replaced by Pharmexcil 2020 (70% of pharmaceuticals imported). Ataguba and Kabaniha 2022 verified (Table 2, Ghana quintiles); Akazili et al. 2011 added. The unsupported 12.8% figure is not used"],
-    ["12", "Preprint and Springer paper", "Confirmed the medRxiv preprint is the same study as the published BMC Public Health paper. Both are cited in the Introduction as prior work.", "Done. DOI confirmed on Crossref; volume and article number not yet assigned (4 Nov 2026)"],
+    ["12", "Preprint and Springer paper", "Corrected. Crossref and the medRxiv API (4 Nov 2026) show the medRxiv preprint 10.1101/2025.03.31.25324988 is by Baah-Abekah et al., not by the authors, and is not linked to the BMC Public Health paper. The 'earlier version' claim is removed; the preprint is now cited only as the source of the 12.9–20.4% SSA CHE range in Table 1. Wellu et al. 2026 is cited by DOI (online first; no volume yet).", "Done"],
     ["13", "Co-author and clinical consultant", "Ziem P. Wellu named as co-corresponding author with affiliation, ORCID and contribution statement.", "Done. ORCID for N. O. A. Prempeh still to add"],
     ["14", "Journal and status", "Target: Health Economics Review. The README claim of submission and review is incorrect and should be corrected.", "Done. README in ZziemWellu repository corrected (not submitted; target journal stated)"],
     ["15", "Reproducibility of the pipeline", "All v4 outputs are generated by analysis_v4.py from model_v4.py. The upper-bound configuration reproduces the v3 numbers exactly.", "Done"],
     ["16", "Descriptive subgroup comparisons", "Removed (Section 4.7 and the literacy hypothesis). A test needs household-level data, which are not available to the team.", "Done"],
+    ["17", "Okoroh et al. 2018 author list", "The reference listed two authors; Crossref lists seven. In-text citation changed to Okoroh et al.", "Done"],
+    ["18", "Journal format (Health Economics Review)", "Structured abstract without citations; Abbreviations; Declarations with the journal subheadings; numbered (Vancouver) references in order of citation; figures as separate files with titles and legends in the text. Built as manuscript/submission/.", "Done"],
+    ["19", "Author decisions (4 Nov 2026)", "AI use: wording and sentence framing only. Ethics: not required (secondary anonymised data). Clinician identity: not disclosed. Archive DOI: to be added at proof stage.", "Done"],
 ]
 
+# ------------------------------------------------------------------ submission copy (Health Economics Review)
+# Numbered (Vancouver) references in order of first citation. Author lists and journal details for every
+# DOI reference were checked against Crossref on 4 Nov 2026.
+VANCOUVER = {
+    "Akazili, Gyapong and McIntyre 2011": "Akazili J, Gyapong J, McIntyre D. Who pays for health care in Ghana? Int J Equity Health. 2011;10:26. https://doi.org/10.1186/1475-9276-10-26.",
+    "Akazili et al. 2017a": "Akazili J, Ataguba JE, Kanmiki EW, Gyapong J, Sankoh O, Oduro A, McIntyre D. Assessing the impoverishment effects of out-of-pocket healthcare payments prior to the uptake of the national health insurance scheme in Ghana. BMC Int Health Hum Rights. 2017;17:13. https://doi.org/10.1186/s12914-017-0121-7.",
+    "Akazili et al. 2017b": "Akazili J, McIntyre D, Kanmiki EW, Gyapong J, Oduro A, Sankoh O, Ataguba JE. Assessing the catastrophic effects of out-of-pocket healthcare payments prior to the uptake of a nationwide health insurance scheme in Ghana. Glob Health Action. 2017;10(1):1289735. https://doi.org/10.1080/16549716.2017.1289735.",
+    "Ataguba and Kabaniha 2022": "Ataguba JE, Kabaniha GA. Characterizing key misconceptions of equity in health financing for universal health coverage. Health Policy Plan. 2022;37(7):928–31. https://doi.org/10.1093/heapol/czac041.",
+    "Baah-Abekah et al. 2025": "Baah-Abekah J, Ibrahim DK, Atugba TA, Theodore S, Seidu SA, Casley-Hayford D, Deborah L, Ahulu B. An analysis of household catastrophic health expenditure and food insecurity in Ghana. medRxiv. 2025. Preprint. https://doi.org/10.1101/2025.03.31.25324988.",
+    "Bloomberg 2022": "Bloomberg. Ghana inflation exceeds 37% as data compilation is changed. 12 October 2022. https://www.bloomberg.com/news/articles/2022-10-12/ghana-annual-inflation-at-37-2-as-data-compilation-is-changed.",
+    "Fair Wages and Salaries Commission 2025": "Fair Wages and Salaries Commission. 2026 national daily minimum wage. Accra: Government of Ghana; 2025.",
+    "Finex Insights 2025": "Finex Insights. Ghana's minimum wage growth: a decade of gradual gains and sudden jumps (2015–2025). 19 August 2025.",
+    "Ghana Statistical Service 2018": "Ghana Statistical Service. Ghana Living Standards Survey (GLSS VII) 2016–2017, version 01. Ref. GHA_2016_GLSS_v01_M. Accra: Ghana Statistical Service; 2018. https://microdata.statsghana.gov.gh/index.php/catalog/97.",
+    "Okoroh et al. 2018": "Okoroh J, Essoun S, Seddoh A, Harris H, Weissman JS, Dsane-Selby L, Riviello R. Evaluating the impact of the national health insurance scheme of Ghana on out of pocket expenditures: a systematic review. BMC Health Serv Res. 2018;18:426. https://doi.org/10.1186/s12913-018-3249-9.",
+    "Pharmexcil 2020": "Pharmaceuticals Export Promotion Council of India (Pharmexcil). Ghana pharma market & regulatory report. Hyderabad: Pharmexcil; 2020. https://pharmexcil.com/uploads/countryreports/Ghana_Market_Regulatory_report2020.pdf.",
+    "Sataru, Twumasi-Ankrah and Seddoh 2022": "Sataru F, Twumasi-Ankrah K, Seddoh A. An analysis of catastrophic out-of-pocket health expenditures in Ghana. Front Health Serv. 2022;2:706216. https://doi.org/10.3389/frhs.2022.706216.",
+    "Trading Economics 2026": "Trading Economics. Ghana inflation rate. 2026. https://tradingeconomics.com/ghana/inflation-cpi. Accessed August 2026.",
+    "Wellu et al. 2026": "Wellu PZ, Redeemer A, Peprah MA, Amakye D, Agyemang EP, Peprah P, Agyemang-Duah W. Catastrophic health expenditure and household food insecurity among older adults with health conditions in Ghana: a cross-sectional analysis. BMC Public Health. 2026. https://doi.org/10.1186/s12889-026-28188-1.",
+    "WHO Regional Office for Africa 2023": "WHO Regional Office for Africa. Ghana: universal health coverage/communicable and non-communicable diseases (country profile). Brazzaville: WHO Regional Office for Africa; 2023. https://www.afro.who.int/sites/default/files/2023-08/Ghana.pdf.",
+    "World Bank 2023": "World Bank. Public health expenditure for universal health coverage in Ghana. Washington, DC: World Bank Group; 2023.",
+    "World Bank, n.d.": "World Bank. Out-of-pocket expenditure (% of current health expenditure) – Ghana. World Bank Open Data. https://data.worldbank.org/indicator/SH.XPD.OOPC.CH.ZS?locations=GH. Accessed 4 November 2026.",
+}
+# narrative citations: "Okoroh et al. (2018) reviewed" -> "Okoroh et al. [n] reviewed"
+NARRATIVE = {
+    "Okoroh et al. (2018)": ("Okoroh et al.", "Okoroh et al. 2018"),
+    "Sataru, Twumasi-Ankrah and Seddoh (2022)": ("Sataru et al.", "Sataru, Twumasi-Ankrah and Seddoh 2022"),
+}
+
+
+def to_numbered(blocks):
+    """Replace author-year citations with [n] in order of first appearance; return (blocks, ordered keys)."""
+    order = []
+
+    def num(key):
+        if key not in order:
+            order.append(key)
+        return order.index(key) + 1
+
+    def fmt(ns):
+        ns = sorted(set(ns)); out = []; i = 0
+        while i < len(ns):
+            j = i
+            while j + 1 < len(ns) and ns[j + 1] == ns[j] + 1:
+                j += 1
+            out.append(f"{ns[i]}–{ns[j]}" if j - i >= 2 else ", ".join(str(n) for n in ns[i:j + 1]))
+            i = j + 1
+        return "[" + ", ".join(out) + "]"
+
+    def conv(text):
+        if not isinstance(text, str):
+            return text
+        # one left-to-right pass so numbers follow the order of first appearance
+        narr = "|".join(re.escape(k) for k in NARRATIVE)
+        bare = "|".join(re.escape(k) for k in sorted(VANCOUVER, key=len, reverse=True))
+
+        def one(m):
+            if m.group("narr"):
+                name, key = NARRATIVE[m.group("narr")]
+                return f"{name} [{num(key)}]"
+            if m.group("par") is not None:
+                parts = [x.strip() for x in m.group("par").split(";")]
+                if all(x in VANCOUVER for x in parts):
+                    return (" " if m.group(0).startswith(" ") else "") + fmt([num(x) for x in parts])
+                lead = " " if m.group(0).startswith(" ") else ""
+                return lead + "(" + conv(m.group("par")) + ")"   # mixed text: convert citations inside
+            return f"[{num(m.group('bare'))}]"     # bare citation, e.g. in a table cell
+        text = re.sub(rf"(?P<narr>{narr})| ?\((?P<par>[^()]*)\)|(?P<bare>{bare})", one, text)
+        # merge adjacent groups such as "[13]; [14]" -> "[13, 14]"
+        while re.search(r"\[([\d, –]+)\]; \[([\d, –]+)\]", text):
+            text = re.sub(r"\[([\d, –]+)\]; \[([\d, –]+)\]", r"[\1, \2]", text, count=1)
+        return text
+
+    out = []
+    for b in blocks:
+        if b[0] == "refs":
+            continue
+        if b[0] == "table":
+            _, cap, header, rows = b
+            out.append(("table", conv(cap), [conv(h) for h in header], [[conv(str(v)) for v in r] for r in rows]))
+        elif b[0] == "fig":
+            out.append((b[0], b[1], b[2], conv(b[3])))
+        elif b[0] == "lp":
+            out.append((b[0], b[1], conv(b[2])))
+        else:
+            out.append((b[0], conv(b[1])) + tuple(b[2:]))
+    return out, order
+
+
+def build_submission():
+    import shutil
+    sub = os.path.join(MS, "submission"); os.makedirs(sub, exist_ok=True)
+    blocks, order = to_numbered(MANUSCRIPT)
+    missing = set(VANCOUVER) - set(order)
+    assert not missing, f"references never cited: {missing}"
+    strings = [x for b in blocks for x in (
+        [b[1]] + b[2] + [c for r in b[3] for c in r] if b[0] == "table" else [y for y in b[1:] if isinstance(y, str)])]
+    bad = [x for x in strings if "[[" in x]
+    assert not bad, f"unresolved [[...]] placeholder in submission text: {bad[:3]}"
+    leftover = re.findall(r"[A-Z][A-Za-z\-]+(?: et al\.)?,? (?:and [A-Z][A-Za-z\-]+ )?\(?(?:19|20)\d\d[ab]?\)?", " ".join(strings))
+    leftover = [x for x in leftover if not re.match(r"(GLSS|AHIES|Figure|Table|Section)", x)]
+    if leftover:
+        print("check possible unconverted citations:", leftover)
+    lines = [f"{i}. {VANCOUVER[k]}" for i, k in enumerate(order, 1)]
+    blocks.append(("h1", "References"))
+    blocks += [("p", l) for l in lines]
+    # figures: separate files numbered as in the text
+    n = 0
+    for b in blocks:
+        if b[0] == "fig":
+            n += 1
+            label, title, _ = fig_parts(b[3])
+            assert label == f"Figure {n}", (label, n)
+            assert len(title.split()) <= 15, f"{label} title over 15 words: {title}"
+            shutil.copyfile(os.path.join(FIG, b[1]), os.path.join(sub, f"Figure{n}.png"))
+    build(blocks, os.path.join(sub, "Manuscript_HER_submission.docx"), figures_inline=False)
+    print(f"{len(order)} references, {n} figure files in {sub}")
+
+
 def main():
+    build_submission()
     build(MANUSCRIPT, os.path.join(MS, "Revised_manuscript_v4.docx"),
           banner="REVISED MANUSCRIPT (v4) FOR AUTHOR REVIEW. Numbers are generated from outputs/v4 at build time. Highlighted items must be resolved before submission to Health Economics Review.")
     build([("title", "Issue log (v4): Gen Z healthcare affordability manuscript"),

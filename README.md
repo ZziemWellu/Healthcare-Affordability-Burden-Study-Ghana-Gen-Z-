@@ -2,7 +2,7 @@
 
 Code, outputs and manuscript for **"Projecting the Healthcare Affordability Gap: A Stochastic Stress-Test of Out-of-Pocket Healthcare Burden for Ghana's Generation Z Cohort, 2026–2061"** (Prempeh and Wellu).
 
-> Status: the v4 manuscript is in preparation for submission to *Health Economics Review*. It has **not** been submitted or peer reviewed.
+> Status: the v4 manuscript is formatted for submission to *Health Economics Review*. It has **not** yet been submitted or peer reviewed.
 
 ## What the study does
 
@@ -28,12 +28,13 @@ All numbers come from `outputs/v4/key_numbers.json`.
 |---|---|
 | `model_v4.py` | The v4 model (used by every v4 analysis) |
 | `analysis_v4.py` | v4 pipeline: primary and upper-bound runs, sensitivity, figures → `outputs/v4/`, `figures/` |
-| `build_manuscript_v4.py` | Builds `manuscript/Revised_manuscript_v4.docx` and `Issue_log_v4.docx` from `outputs/v4` |
+| `build_manuscript_v4.py` | Builds the submission copy, the review copy and the issue log from `outputs/v4` |
 | `run_all.py` | Runs every model script in order |
 | `simulation.py`, `extended_simulation.py`, `sensitivity_analysis.py`, `requirements_5_6_analysis.py`, `reconciliation_analysis.py`, `reanchor_sensitivity.py` | v3 scripts (6% baseline), kept for traceability → `outputs/` |
 | `ghana_survey_toolkit.py` | GLSS7/AHIES extraction toolkit (needs the microdata) |
 | `glss7_extraction_config.yaml` | Files, variables and definitions used for the GLSS7 statistics |
-| `manuscript/` | v4 manuscript and issue log (`[[...]]` highlights are items to resolve before submission) |
+| `manuscript/submission/` | **Journal submission copy** for *Health Economics Review*: `Manuscript_HER_submission.docx` (numbered references, no review notes) and `Figure1.png`–`Figure7.png` |
+| `manuscript/` | Review copy of the v4 manuscript (author-year references, embedded figures) and the issue log |
 | `CODE_REVIEW.md` | Reproduction check of the v3 code (6 Oct 2026) |
 | `SSRN_submission_draft.md` | Preprint submission text (v4) |
 | `healthcare_affordability_gap_genz_ghana_revised.pdf` | **Superseded** v3 draft (6% baseline), kept for the record |

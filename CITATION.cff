@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this code or its outputs, please cite it as below."
+title: "Projecting the Healthcare Affordability Gap: code and outputs for a stochastic stress-test of out-of-pocket healthcare burden for Ghana's Generation Z cohort, 2026-2061"
+type: software
+authors:
+  - family-names: Prempeh
+    given-names: Nana Owusu Achiaw
+    affiliation: "Department of Data Science, Academic City University College, Accra, Ghana"
+  - family-names: Wellu
+    given-names: Ziem P.
+    affiliation: "Department of Computer Science, University of Ghana, Accra, Ghana"
+    orcid: "https://orcid.org/0009-0004-5808-2675"
+repository-code: "https://github.com/ZziemWellu/Healthcare-Affordability-Burden-Study-Ghana-Gen-Z-"
+license: MIT
+keywords:
+  - catastrophic health expenditure
+  - out-of-pocket payments
+  - Ghana
+  - GLSS7
+  - Monte Carlo simulation

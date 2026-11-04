@@ -1,7 +1,7 @@
 # SSRN preprint: submission text (v4)
 
-Prepared 4 November 2026 from `manuscript/Revised_manuscript_v4.docx`. Post the preprint only after the
-highlighted `[[...]]` items in the manuscript are resolved, so that the preprint and the journal submission match.
+Prepared 4 November 2026 from `manuscript/submission/Manuscript_HER_submission.docx` (the journal submission copy),
+so that the preprint and the journal submission match.
 
 ## Title
 Projecting the Healthcare Affordability Gap: A Stochastic Stress-Test of Out-of-Pocket Healthcare Burden for Ghana's Generation Z Cohort, 2026–2061
@@ -11,7 +11,13 @@ Projecting the Healthcare Affordability Gap: A Stochastic Stress-Test of Out-of-
 - Ziem P. Wellu (co-corresponding author), Department of Computer Science, University of Ghana, Accra, Ghana. pzwellu@st.ug.edu.gh. ORCID 0009-0004-5808-2675
 
 ## Abstract
-Ghana's National Health Insurance Scheme was designed to protect households from catastrophic out-of-pocket (OOP) healthcare costs, yet OOP payments still account for about 26 percent of current health expenditure nationally (World Bank, n.d.). This paper asks a generational question: if current trends in healthcare costs, wages and macroeconomic volatility persist, what OOP burden will Ghana's Generation Z cohort face around age 50? We combine two approaches. First, we compute household OOP burden from GLSS7 (2016/17) microdata (n = 14,009 households) and find a weighted mean of 0.75 percent of household expenditure, which is 0 percent at the median. Second, we run a stochastic stress-test simulation of 10,000 household trajectories under three scenarios (status quo, financing reform to the Abuja target, and repeated currency shocks). The primary analysis uses the GLSS7 baseline. Under this baseline, the status-quo mean burden in 2051 is 2.5 percent of income, the financing-reform scenario is 0.7 percent, and repeated currency shocks reach 10.5 percent, with a 90th percentile of 19.8 percent. Only 0.3 percent of status-quo households exceed the 20 percent catastrophic-expenditure threshold in 2051, and risk is concentrated in the shock scenarios. A previous calibration that set the non-crisis burden at 6 percent of income produces materially higher burdens (status quo 19.6 percent in 2051). We report it as an upper bound because the GLSS7 data do not support that baseline. The model does not reproduce the GLSS7 catastrophic-expenditure incidence in year one, and we report this as a limitation. Results are model-implied outcomes under stated assumptions, not forecasts for individual households.
+Background: Ghana's National Health Insurance Scheme was designed to protect households from catastrophic out-of-pocket (OOP) healthcare costs, yet OOP payments still account for more than a quarter of current health expenditure. This paper asks a generational question: if current trends in healthcare costs, wages and macroeconomic volatility persist, what OOP burden will Ghana's Generation Z cohort face around age 50?
+
+Methods: We computed household OOP burden from GLSS7 (2016/17) microdata (n = 14,009 households). We then ran a stochastic stress-test simulation of 10,000 household trajectories from 2026 to 2051 under three scenarios: status quo, financing reform to the Abuja target, and repeated currency shocks. The primary analysis is anchored to the GLSS7 baseline; an earlier calibration with a 6 percent non-crisis burden is reported as an upper bound.
+
+Results: The GLSS7 weighted mean OOP burden is 0.75 percent of household expenditure, and 0 percent at the median. Under this baseline, the status-quo mean burden in 2051 is 2.5 percent of income, the financing-reform scenario is 0.7 percent, and repeated currency shocks reach 10.5 percent, with a 90th percentile of 19.8 percent. Only 0.3 percent of status-quo households exceed the 20 percent catastrophic-expenditure threshold in 2051. The 6 percent calibration produces materially higher burdens (status quo 19.6 percent in 2051), but the GLSS7 data do not support that baseline. The model does not reproduce the GLSS7 catastrophic-expenditure incidence in year one.
+
+Conclusions: Under the data-supported baseline, the generational risk lies in exposure to currency shocks rather than in the average household's burden, and financing reform keeps burden low under every calibration. Results are model-implied outcomes under stated assumptions, not forecasts for individual households.
 
 ## Keywords
 catastrophic health expenditure; out-of-pocket payments; National Health Insurance Scheme; Ghana; generational projection; Monte Carlo simulation; GLSS7
