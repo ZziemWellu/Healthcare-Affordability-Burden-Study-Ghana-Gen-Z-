@@ -230,7 +230,6 @@ path_plot(ax, "upper", 26, "--", " (6% upper bound)")
 ax.axhline(20, color="grey", ls=":", lw=1)
 ax.text(2027, 20.8, "20% catastrophic-expenditure threshold", fontsize=8, color="grey")
 ax.set_xlabel("Year"); ax.set_ylabel("Mean household OOP burden (% of income)")
-ax.set_title("Figure 1. Projected mean household OOP burden, Ghana Gen Z cohort, 2026-2051", fontsize=10, loc="left")
 ax.legend(fontsize=7, frameon=False); ax.grid(axis="y", color="#e5e5e5")
 fig.tight_layout(); fig.savefig(os.path.join(FIG, "figure1_paths_2026_2051.png")); plt.close(fig)
 
@@ -243,7 +242,6 @@ for patch, s in zip(bp["boxes"], SC):
 ax.axhline(20, color="grey", ls=":", lw=1)
 ax.set_xticks(range(1, 4)); ax.set_xticklabels([SCL[s] for s in SC], fontsize=8)
 ax.set_ylabel("Household OOP burden in 2051 (% of income)")
-ax.set_title("Figure 2. Distribution of 2051 burden, GLSS7 baseline (whiskers: 10th-90th percentile)", fontsize=9.5, loc="left")
 ax.grid(axis="y", color="#e5e5e5")
 fig.tight_layout(); fig.savefig(os.path.join(FIG, "figure2_distribution_2051.png")); plt.close(fig)
 
@@ -254,7 +252,6 @@ path_plot(ax, "upper", 36, "--", " (6% upper bound)")
 ax.axhline(20, color="grey", ls=":", lw=1)
 ax.axvline(2051, color="grey", ls=":", lw=0.8); ax.text(2051.3, 1, "age 50", fontsize=7, color="grey")
 ax.set_xlabel("Year (age 25 in 2026, age 60 in 2061)"); ax.set_ylabel("Mean household OOP burden (% of income)")
-ax.set_title("Figure 6. Extended projection through age 60 (2026-2061)", fontsize=10, loc="left")
 ax.legend(fontsize=7, frameon=False); ax.grid(axis="y", color="#e5e5e5")
 fig.tight_layout(); fig.savefig(os.path.join(FIG, "figure6_extended_2061.png")); plt.close(fig)
 
@@ -267,7 +264,6 @@ ax.bar(ages, [100 - v for v in vals], bottom=vals, color="#dfd6c8", width=0.5)
 for i, v in enumerate(vals):
     ax.text(i, v + 2, f"{v:.1f}%", ha="center", fontsize=9)
 ax.set_ylabel("Share of household income (%)"); ax.set_ylim(0, 105)
-ax.set_title("Figure 7. Health (OOP) share of income, status quo, GLSS7 baseline", fontsize=9.5, loc="left")
 fig.tight_layout(); fig.savefig(os.path.join(FIG, "figure7_budget_status_quo.png")); plt.close(fig)
 
 fig, ax = plt.subplots(figsize=(7, 4.5), dpi=200)
@@ -277,7 +273,6 @@ ax.bar([SCL[s] for s in SC], [100 - v for v in v60], bottom=v60, color="#dfd6c8"
 for i, v in enumerate(v60):
     ax.text(i, v + 2, f"{v:.1f}%", ha="center", fontsize=9)
 ax.set_ylim(0, 105); ax.set_ylabel("Share of household income (%)"); ax.tick_params(axis="x", labelsize=8)
-ax.set_title("Figure 8. Health share of household income at age 60 (2061), by scenario", fontsize=9.5, loc="left")
 fig.tight_layout(); fig.savefig(os.path.join(FIG, "figure8_budget_age60.png")); plt.close(fig)
 
 # Figure 11: tornado (CRN), primary
@@ -289,7 +284,6 @@ ax.barh(y, np.abs(t.mean2051_at_high - t.mean2051_at_low), left=left, color="#B3
 ax.axvline(t.baseline_mean2051.iloc[0], color="#333", ls="--", lw=1)
 ax.set_yticks(y); ax.set_yticklabels(t.label, fontsize=7.5)
 ax.set_xlabel("Mean household OOP burden in 2051 (% of income)")
-ax.set_title("Figure 11. One-at-a-time sensitivity, GLSS7 baseline (common random numbers)", fontsize=9.5, loc="left")
 ax.grid(axis="x", color="#e5e5e5")
 fig.tight_layout(); fig.savefig(os.path.join(FIG, "figure11_tornado_primary.png")); plt.close(fig)
 
@@ -299,7 +293,6 @@ ax.hist(psa_all["primary"].outcome_2051_pct, bins=30, color="#B3541E", alpha=0.8
 ax.axvline(20, color="grey", ls=":"); ax.axvline(psa_summary["primary"]["median"], color="#1F7A5A", label="median")
 ax.set_xlabel("Mean household OOP burden in 2051 (% of income)"); ax.set_ylabel("Joint parameter draws")
 ax.legend(fontsize=8, frameon=False)
-ax.set_title("Figure 12. Probabilistic sensitivity, GLSS7 baseline (300 joint draws)", fontsize=9.5, loc="left")
 fig.tight_layout(); fig.savefig(os.path.join(FIG, "figure12_psa_primary.png")); plt.close(fig)
 
 print("v4 analysis complete. Key numbers:")
