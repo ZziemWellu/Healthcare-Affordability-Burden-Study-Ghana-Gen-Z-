@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+
+# GSS microdata must never be committed
+*.dta
+*.sav
+data/raw/

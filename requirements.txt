@@ -1,0 +1,12 @@
+# Versions used to produce outputs/ and manuscript/ (Python 3.13.4, Windows 10, 2026-11-04).
+# Simulation, sensitivity and figures
+numpy==2.2.5
+pandas==2.2.3
+scipy==1.16.1
+matplotlib==3.10.5
+
+# Manuscript build (build_manuscript_v4.py)
+python-docx==1.2.0
+
+# GLSS7 extraction toolkit only (ghana_survey_toolkit.py); needs the GSS microdata
+pyreadstat>=1.2
