@@ -8,7 +8,7 @@ Projecting the Healthcare Affordability Gap: A Stochastic Stress-Test of Out-of-
 
 ## Authors
 - Nana Owusu Achiaw Prempeh (corresponding author), Department of Data Science, Academic City University College, Accra, Ghana. nana.prempeh@acity.edu.gh
-- Ziem P. Wellu (co-corresponding author), Department of Computer Science, University of Ghana, Accra, Ghana. pzwellu@st.ug.edu.gh. ORCID 0009-0004-5808-2675
+- Patrick Ziem Wellu (co-corresponding author), Department of Computer Science, University of Ghana, Accra, Ghana. pzwellu@st.ug.edu.gh. ORCID 0009-0004-5808-2675
 
 ## Abstract
 Background: Ghana's National Health Insurance Scheme was designed to protect households from catastrophic out-of-pocket (OOP) healthcare costs, yet OOP payments still account for more than a quarter of current health expenditure. This paper asks a generational question: if current trends in healthcare costs, wages and macroeconomic volatility persist, what OOP burden will Ghana's Generation Z cohort face around age 50?

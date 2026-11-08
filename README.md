@@ -48,9 +48,9 @@ python run_all.py                # about 30 s; writes outputs/ and figures/
 python build_manuscript_v4.py    # rebuilds the manuscript from outputs/v4
 ```
 
-All runs are seeded. Re-running on 4 Nov 2026 (Python 3.13.4, Windows 10) reproduced every committed output byte for byte.
+All runs are seeded. Re-running on 8 Nov 2026 (Python 3.13.4, Windows 10) reproduced every committed numeric output byte for byte.
 
-Figures 1, 2, 6, 7, 8, 11 and 12 come from the model. Figures 3–5, 9 and 10 and Table 3 come from the GLSS7 microdata and are not regenerated here.
+All seven manuscript figures come from the model (`figures/figure1, figure2, figure11, figure12, figure6, figure7, figure8` are manuscript Figures 1–7). Table 3 comes from the GLSS7 microdata and is not regenerated here.
 
 ## Data access
 
@@ -59,7 +59,7 @@ GLSS7 (2016/17) microdata belong to the Ghana Statistical Service and are availa
 ## Citation
 
 ```
-Prempeh, N. O. A., and Wellu, Z. P. (2026). Projecting the Healthcare Affordability Gap: A Stochastic
+Prempeh, N. O. A., and Wellu, P. Z. (2026). Projecting the Healthcare Affordability Gap: A Stochastic
 Stress-Test of Out-of-Pocket Healthcare Burden for Ghana's Generation Z Cohort, 2026–2061.
 Manuscript in preparation. https://github.com/ZziemWellu/Healthcare-Affordability-Burden-Study-Ghana-Gen-Z-
 ```
@@ -67,7 +67,7 @@ Manuscript in preparation. https://github.com/ZziemWellu/Healthcare-Affordabilit
 ## Authors
 
 - **Nana Owusu Achiaw Prempeh** (corresponding), Department of Data Science, Academic City University College, Accra. GitHub [@steveprempeh23](https://github.com/steveprempeh23)
-- **Ziem P. Wellu** (co-corresponding), Department of Computer Science, University of Ghana, Accra. ORCID [0009-0004-5808-2675](https://orcid.org/0009-0004-5808-2675). GitHub [@ZziemWellu](https://github.com/ZziemWellu)
+- **Patrick Ziem Wellu** (co-corresponding), Department of Computer Science, University of Ghana, Accra. ORCID [0009-0004-5808-2675](https://orcid.org/0009-0004-5808-2675). GitHub [@ZziemWellu](https://github.com/ZziemWellu)
 
 ## Licence
 
